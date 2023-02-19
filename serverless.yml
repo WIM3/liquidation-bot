@@ -1,0 +1,44 @@
+service: liquidation-bot
+
+useDotenv: true
+
+plugins:
+  - serverless-webpack
+  - serverless-offline
+  - serverless-export-env
+
+custom:
+  stage: ${opt:stage, self:provider.stage}
+  webpack:
+    webpackConfig: ./webpack.config.js
+    includeModules: true
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  region: eu-central-1
+  stage: ${opt:stage, 'dev'}
+  environment:
+    EVM: ${self:provider.stage}
+    WALLET_PK: ${ssm:/infinix/${self:custom.stage}/liquidation-bot/walletPk}
+    PROVIDER_URL: ${ssm:/infinix/${self:custom.stage}/liquidation-bot/providerUrl}
+  apiGateway:
+    shouldStartNameWithService: true
+
+functions:
+  monitor:
+    handler: src/services/monitor.main
+    # TODO: needs to be replaced with schedule, but it cannot be too short
+    events:
+      - httpApi:
+          method: GET
+          path: /monitor
+  executor:
+    handler: src/services/executor.main
+    timeout: 900
+    environment:
+      CLEARING_HOUSE: '0xaFBCFf94cD9cA695b4d97ebAC9095303cC38703A'
+    events:
+      - httpApi:
+          method: POST
+          path: /executor
