@@ -5,14 +5,13 @@
 
 ### Parameters
 
-Some parameters can be set directly in `serverless.yml`:
-
-- `CLEARING_HOURSE` - clearing house address (required)
-- `SUBGRAPH_URL` - url of the subgraph with positions (required)
-
-The remaining parameters are private and they are therefore taken from `AWS Parameter Store` with these paths:
+All the parameters are taken from `AWS Parameter Store` with these paths:
 
 ```
-/infinix/[ENVIRONMENT]/liquidation-bot/walletPk
-/infinix/[ENVIRONMENT]/liquidation-bot/providerUrl
+/traders/[ENVIRONMENT]/liquidation-bot/walletPk
+/traders/[ENVIRONMENT]/liquidation-bot/providerUrl
+/traders/[ENVIRONMENT]/liquidation-bot/subgraphUrl
+/traders/[ENVIRONMENT]/liquidation-bot/telegramApi
+/traders/[ENVIRONMENT]/liquidation-bot/telegramGroup
+/traders/[ENVIRONMENT]/liquidation-bot/clearingHouse
 ```

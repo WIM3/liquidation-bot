@@ -35,3 +35,11 @@ export type Position = {
   fundingPayment: string;
   totalPnlAmount: string;
 };
+
+export type TelegramResponse = {
+  id: number;
+  from: number;
+  chat: number;
+  ts: number;
+  text?: string;
+};

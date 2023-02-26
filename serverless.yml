@@ -20,14 +20,19 @@ provider:
   stage: ${opt:stage, 'dev'}
   environment:
     EVM: ${self:provider.stage}
-    WALLET_PK: ${ssm:/infinix/${self:custom.stage}/liquidation-bot/walletPk}
-    PROVIDER_URL: ${ssm:/infinix/${self:custom.stage}/liquidation-bot/providerUrl}
+    WALLET_PK: ${ssm:/traders/${self:custom.stage}/liquidation-bot/walletPk}
+    PROVIDER_URL: ${ssm:/traders/${self:custom.stage}/liquidation-bot/providerUrl}
   apiGateway:
     shouldStartNameWithService: true
 
 functions:
   monitor:
     handler: src/services/monitor.main
+    timeout: 900
+    environment:
+      SUBGRAPH_URL: ${ssm:/traders/${self:custom.stage}/liquidation-bot/subgraphUrl}
+      TELEGRAM_API: ${ssm:/traders/${self:custom.stage}/liquidation-bot/telegramApi}
+      TELEGRAM_GROUP: ${ssm:/traders/${self:custom.stage}/liquidation-bot/telegramGroup}
     # TODO: needs to be replaced with schedule, but it cannot be too short
     events:
       - httpApi:
@@ -37,7 +42,7 @@ functions:
     handler: src/services/executor.main
     timeout: 900
     environment:
-      CLEARING_HOUSE: '0xaFBCFf94cD9cA695b4d97ebAC9095303cC38703A'
+      CLEARING_HOUSE: ${ssm:/traders/${self:custom.stage}/liquidation-bot/clearingHouse}
     events:
       - httpApi:
           method: POST
